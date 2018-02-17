@@ -4,6 +4,20 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const salt = bcrypt.genSaltSync(10);
 
+//passport
+const passport = require("passport");
+//login
+router.get("/login", (req,res)=>{
+   res.render("auth/login");
+});
+
+router.post("/login", passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+    failureFlash: true,
+    passReqToCallback: true
+}));
+
 
 router.get("/signup", (req,res, next)=>{
     res.render("auth/signup");
