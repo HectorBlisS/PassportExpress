@@ -21,9 +21,13 @@ const authRouter = require("./routes/auth");
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
+
 //********************************** passport ****************
 //model
 const User = require("./models/User");
+//flash for errors
+const flash = require("connect-flash");
 //session
 
 const session = require("express-session");
@@ -49,7 +53,10 @@ passport.deserializeUser((id, cb)=>{
   })
 });
 
-passport.use(new LocalStrategy((username, password, next)=>{
+//flash
+app.use(flash());
+
+passport.use(new LocalStrategy({passReqToCallback:true},(req, username, password, next)=>{
   User.findOne({username}, (err, user)=>{
     if(err) return next(err);
     if(!user) return next(null, false, {message: "incorrect username"});
