@@ -53,6 +53,36 @@ passport.use(new FbStrategy({
 
 //********************** facebook login ******************
 
+//********************** Google login ********************
+
+const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
+
+passport.use(new GoogleStrategy({
+    clientID: "87733822528-p0ifpgrk6788cecitav9m1q20o5kp6sp.apps.googleusercontent.com",
+    clientSecret: "TsK6Xb7sKc3ZTyxDWJC5cdFF",
+    callbackURL: "/auth/google/callback"
+},
+    (accessToken, refreshToken, profile, done)=>{
+        User.findOne({googleID: profile.id}, (err,user)=>{
+            console.log(profile);
+            if(err) return done(err);
+            if(user) return done(null, user);
+            const newUser = new User({
+                googleID: profile.id,
+                displayName:profile.displayName,
+                email:profile.emails.length > 0 ? profile.emails[0].value : null
+            });
+            newUser.save(err=>{
+                if (err) return done(err);
+                done(null, newUser);
+            });
+        });
+    }
+    ));
+
+//********************** Google login ********************
+
+
 
 //********************************** passport ****************
 //model
