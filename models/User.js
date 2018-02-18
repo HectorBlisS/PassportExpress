@@ -9,7 +9,12 @@ const userSchema = new Schema(
         facebookID: String,
         displayName: String,
         email: String,
-        googleID: String
+        googleID: String,
+        role:{
+            type: String,
+            enum: ["GUEST", "EDITOR", "ADMIN"],
+            default: "GUEST"
+        }
 
     },
     {
