@@ -10,11 +10,21 @@ const ensureLogin = require("connect-ensure-login");
 //passport
 const passport = require("passport");
 
+
+//facebook login
+router.get("/auth/facebook", passport.authenticate("facebook", {scope: 'email'}));
+router.get("/auth/facebook/callback", passport.authenticate("facebook", {
+    successRedirect: "/private",
+    failureRedirect: "/login"
+}));
+//facebook login
+
 //private page
 router.get("/private",
     ensureLogin.ensureLoggedIn(),
     (req, res)=>{
 
+    console.log(req.user);
     res.render("private", {user:req.user});
 
 });

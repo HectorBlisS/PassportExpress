@@ -5,6 +5,11 @@ const userSchema = new Schema(
     {
         username:String,
         password:String,
+        //social login con passport
+        facebookID: String,
+        displayName: String,
+        email: String,
+        googleID: String
 
     },
     {

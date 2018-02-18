@@ -21,17 +21,47 @@ const authRouter = require("./routes/auth");
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+//********************** facebook login ******************
+//se subio el modelo para que las strategys compartan
+const User = require("./models/User");
+const passport = require("passport");
+
+const FbStrategy = require('passport-facebook').Strategy;
+
+passport.use(new FbStrategy({
+    clientID: "399930830428662",
+    clientSecret: "6019fb01f05fff0972ce65b6dbe25231",
+    callbackURL: "/auth/facebook/callback",
+    profileFields: ['email', "displayName"]
+},
+    (accessToken, refreshToken, profile, done)=>{
+  User.findOne({facebookID:profile.id}, (err,user)=>{
+      console.log(profile);
+      if(err) return done(err);
+      if(user) return done(null,user);
+      const newUser = new User({
+          facebookID:profile.id,
+          displayName:profile.displayName,
+          email:profile.emails.length > 0 ? profile.emails[0].value : null
+      });
+      newUser.save((err)=>{
+        if(err) return done(err);
+        done(null, newUser);
+      });
+    });
+}));
+
+//********************** facebook login ******************
 
 
 //********************************** passport ****************
 //model
-const User = require("./models/User");
+//movi la importacion del user par uqe las 2 estrategias lo puedan usar
 //flash for errors
 const flash = require("connect-flash");
 //session
 
 const session = require("express-session");
-const passport = require("passport");
 const bcrypt = require("bcrypt");
 const LocalStrategy = require("passport-local");
 //session middleware
